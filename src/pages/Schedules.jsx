@@ -1,152 +1,55 @@
-import React, { useEffect, useState } from "react";
-import AdminLayout from "../components/AdminLayout";
-import axios from "axios";
+import { useState } from "react";
 
 const Schedules = () => {
-  const [schedules, setSchedules] = useState([]);
-  const [form, setForm] = useState({
-    merchantId: "",
-    amount: "",
-    frequency: "",
-    startDate: "",
-    description: "",
-  });
-
-  const fetchSchedules = async () => {
-    try {
-      const res = await axios.get("/api/schedules");
-      setSchedules(res.data);
-    } catch (error) {
-      console.error("Error fetching schedules", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("/api/schedules", form);
-      setForm({ merchantId: "", amount: "", frequency: "", startDate: "", description: "" });
-      fetchSchedules();
-    } catch (error) {
-      console.error("Error creating schedule", error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`/api/schedules/${id}`);
-      fetchSchedules();
-    } catch (error) {
-      console.error("Error deleting schedule", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
+  const [schedules, setSchedules] = useState([
+    { id: 1, name: "Monthly Payment Schedule", date: "2025-04-10", status: "Active" },
+    { id: 2, name: "Weekly Payment Schedule", date: "2025-04-12", status: "Active" },
+    { id: 3, name: "Quarterly Payment Schedule", date: "2025-06-15", status: "Expired" },
+  ]);
 
   return (
-    <AdminLayout>
-      <h2 className="text-2xl font-semibold mb-4">Schedule Management</h2>
+    <div className="flex flex-col md:flex-row">
+      {/* Sidebar (responsive for mobile) */}
+      <div className="md:w-64 md:h-full bg-gray-800 text-white p-4">
+        {/* Sidebar content */}
+        <h2 className="text-lg font-semibold">Schedules</h2>
+        {/* other sidebar content */}
+      </div>
 
-      {/* Form to create new schedule */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow mb-6"
-      >
-        <input
-          type="text"
-          name="merchantId"
-          placeholder="Merchant ID"
-          value={form.merchantId}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded"
-          required
-        />
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded"
-          required
-        />
-        <select
-          name="frequency"
-          value={form.frequency}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded"
-          required
-        >
-          <option value="">Select Frequency</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
-        <input
-          type="date"
-          name="startDate"
-          value={form.startDate}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="border px-3 py-2 rounded col-span-2"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 col-span-2"
-        >
-          Create Schedule
-        </button>
-      </form>
-
-      {/* Table of schedules */}
-      <div className="bg-white shadow rounded">
-        <table className="w-full table-auto text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="p-3">Merchant ID</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Frequency</th>
-              <th className="p-3">Start Date</th>
-              <th className="p-3">Description</th>
-              <th className="p-3">Actions</th>
+      {/* Main content */}
+      <div className="flex-1 p-6 md:ml-64">
+        <h1 className="text-2xl font-semibold mb-6">Schedules</h1>
+        <table className="min-w-full text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="text-left px-4 py-2">Schedule Name</th>
+              <th className="text-left px-4 py-2">Date</th>
+              <th className="text-left px-4 py-2">Status</th>
+              <th className="text-left px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {schedules.map((s) => (
-              <tr key={s.id} className="border-b">
-                <td className="p-3">{s.merchantId}</td>
-                <td className="p-3">{s.amount}</td>
-                <td className="p-3">{s.frequency}</td>
-                <td className="p-3">{s.startDate?.split("T")[0]}</td>
-                <td className="p-3">{s.description}</td>
-                <td className="p-3">
-                  <button
-                    onClick={() => handleDelete(s.id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
+            {schedules.map((schedule) => (
+              <tr key={schedule.id} className="border-t">
+                <td className="px-4 py-2">{schedule.name}</td>
+                <td className="px-4 py-2">{schedule.date}</td>
+                <td className="px-4 py-2">{schedule.status}</td>
+                <td className="px-4 py-2">
+                  <button className="text-blue-600 hover:underline">Edit</button>
                 </td>
               </tr>
             ))}
+            {schedules.length === 0 && (
+              <tr>
+                <td colSpan="4" className="text-center p-4 text-gray-500">
+                  No schedules available.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-    </AdminLayout>
+    </div>
   );
 };
 

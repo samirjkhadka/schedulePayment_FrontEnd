@@ -69,26 +69,26 @@ const Merchants = () => {
           </tr>
         </thead>
         <tbody>
-          {merchants.map((m) => (
-            <tr key={m.id}>
-              <td className="p-2 border">{m.name}</td>
-              <td className="p-2 border">{m.contact}</td>
+          {/* {merchants.map((m) => ( */}
+            <tr >
+              <td className="p-2 border"></td>
+              <td className="p-2 border"></td>
               <td className="p-2 border space-x-2 text-center">
                 <button
-                  onClick={() => handleEdit(m)}
+                  onClick={() => handleEdit()}
                   className="text-yellow-600 hover:underline"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(m.id)}
+                  onClick={() => handleDelete()}
                   className="text-red-600 hover:underline"
                 >
                   Delete
                 </button>
               </td>
             </tr>
-          ))}
+          {/* ))} */}
         </tbody>
       </table>
     </div>
