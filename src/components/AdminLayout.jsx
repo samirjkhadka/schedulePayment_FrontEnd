@@ -1,17 +1,18 @@
 // components/Layout.jsx
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 
-const Layout = ({ children }) => {
+export default function AdminLayout() {
   return (
-    <div className="flex">
+    <div className="flex h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 flex flex-col bg-gray-100 min-h-screen">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar />
-        <div className="p-6">{children}</div>
+        <main className="flex-1 overflow-auto p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
-};
-
-export default Layout;
+}

@@ -1,126 +1,144 @@
 // src/pages/Users.jsx
 import { useState } from "react";
+import { Button } from '../components/ui/button';
+import { MoreHorizontal, Plus, Search } from 'lucide-react';
 
-const dummyUsers = [
-  { id: 1, name: "Admin One", email: "admin1@example.com", role: "Super Admin" },
-  { id: 2, name: "Admin Two", email: "admin2@example.com", role: "Manager" },
+const users = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    role: 'Admin',
+    status: 'Active',
+    lastActive: '2 hours ago',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    role: 'User',
+    status: 'Active',
+    lastActive: '1 day ago',
+  },
+  {
+    id: 3,
+    name: 'Bob Johnson',
+    email: 'bob@example.com',
+    role: 'User',
+    status: 'Inactive',
+    lastActive: '1 week ago',
+  },
+  {
+    id: 4,
+    name: 'Sarah Williams',
+    email: 'sarah@example.com',
+    role: 'Editor',
+    status: 'Active',
+    lastActive: '3 hours ago',
+  },
+  {
+    id: 5,
+    name: 'Mike Brown',
+    email: 'mike@example.com',
+    role: 'User',
+    status: 'Active',
+    lastActive: '5 minutes ago',
+  },
 ];
 
-const Users = () => {
-  const [users, setUsers] = useState(dummyUsers);
-  const [formData, setFormData] = useState({ name: "", email: "", role: "" });
-  const [editingId, setEditingId] = useState(null);
+export default function Users() {
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleInputChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingId) {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === editingId ? { ...formData, id: editingId } : u))
-      );
-      setEditingId(null);
-    } else {
-      setUsers((prev) => [...prev, { ...formData, id: Date.now() }]);
-    }
-    setFormData({ name: "", email: "", role: "" });
-  };
-
-  const handleEdit = (user) => {
-    setFormData(user);
-    setEditingId(user.id);
-  };
-
-  const handleDelete = (id) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-  };
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">User Management</h1>
-
-      <form onSubmit={handleSubmit} className="mb-6 bg-white p-4 rounded shadow">
-        <div className="grid grid-cols-3 gap-4 mb-4">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Users</h1>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add User
+        </Button>
+      </div>
+      <div className="flex items-center space-x-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <input
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="border p-2 rounded"
-            placeholder="Full Name"
-            required
-          />
-          <input
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="border p-2 rounded"
-            placeholder="Email"
-            required
-          />
-          <input
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            className="border p-2 rounded"
-            placeholder="Role"
-            required
+            type="search"
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-9 w-full rounded-md border border-input bg-white pl-8 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          {editingId ? "Update User" : "Add User"}
-        </button>
-      </form>
-
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="text-left px-4 py-2">Name</th>
-              <th className="text-left px-4 py-2">Email</th>
-              <th className="text-left px-4 py-2">Role</th>
-              <th className="text-left px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id} className="border-t">
-                <td className="px-4 py-2">{u.name}</td>
-                <td className="px-4 py-2">{u.email}</td>
-                <td className="px-4 py-2">{u.role}</td>
-                <td className="px-4 py-2 space-x-2">
-                  <button
-                    onClick={() => handleEdit(u)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(u.id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </td>
+      </div>
+      <div className="rounded-lg border bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b bg-gray-50 text-left text-sm font-medium text-gray-500">
+                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Email</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Last Active</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ))}
-            {users.length === 0 && (
-              <tr>
-                <td colSpan="4" className="text-center p-4 text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="border-b">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${user.name}`}
+                        alt={user.name}
+                        className="h-8 w-8 rounded-full"
+                      />
+                      <span className="font-medium">{user.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                        user.role === 'Admin'
+                          ? 'bg-purple-100 text-purple-700'
+                          : user.role === 'Editor'
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                        user.status === 'Active'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
+                    >
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">{user.lastActive}</td>
+                  <td className="px-6 py-4 text-right">
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Users;
+}
